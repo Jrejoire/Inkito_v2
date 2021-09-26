@@ -1,6 +1,5 @@
 {
   "name": "inkito2",
-  "homepage": "https://jrejoire.github.io/Inkito_v2/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -22,7 +21,7 @@
     "mobx-react": "^7.1.0",
     "mobx-react-lite": "^3.2.0",
     "node-sass": "^5.0.0",
-    "npm": "^7.20.3",
+    "npm": "^7.24.1",
     "postcss": "^7.0.35",
     "prosemirror-markdown": "^1.5.1",
     "react": "^17.0.2",
