@@ -2,7 +2,7 @@ import 'core-js';
 import React, { useEffect } from 'react';
 import StoreContext from '../stores/appStore';
 import {
-  HashRouter,
+  BrowserRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
@@ -57,7 +57,7 @@ const Routes = () => {
   // }
 
   return (
-    <HashRouter basename='/'>
+    <Router basename='/'>
       <div className="routes overflow-x-hidden">
         <Switch >
           <Route path={'/comic-reader'}>
@@ -95,7 +95,7 @@ const Routes = () => {
         {/* <Footer />
         <CookieBanner /> */}
       </div>
-    </HashRouter>
+    </Router>
   );
 
 }

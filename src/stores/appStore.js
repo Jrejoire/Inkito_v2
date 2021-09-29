@@ -290,6 +290,7 @@ export function StoreProvider({ children }) {
 
                 let seriesInfo = await fetch(`${ENDPOINT}/fetchContent`, options)
                     .then(res => res.json())
+                    .catch(err => { console.log(err) })
 
                 runInAction(() => {
                     if (type === "comics") {
@@ -305,7 +306,9 @@ export function StoreProvider({ children }) {
             }
         },
         initHSLogin: async () => {
-            let link = await fetch(`${ENDPOINT}/getLoginURL`).then(res => res.text());
+            let link = await fetch(`${ENDPOINT}/getLoginURL`)
+            .then(res => res.text())
+            .catch(err => { console.log(err) })
 
             runInAction(() => {
                 store.loginLink = link;
@@ -347,6 +350,7 @@ export function StoreProvider({ children }) {
                 //set access token in API and getting user after login
                 let userDetail = await fetch(`${ENDPOINT}/getUser`, options)
                     .then(res => res.json())
+                    .catch(err => { console.log(err) })
 
                 runInAction(() => {
                     store.userDetail = userDetail;
@@ -678,7 +682,8 @@ export function StoreProvider({ children }) {
             };
 
             const seriesInfo = await fetch(`${ENDPOINT}/fetchSeries`, options)
-                .then(res => res.json());
+                .then(res => res.json())
+                .catch(err => { console.log(err) })
 
             return seriesInfo;
         },
