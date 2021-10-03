@@ -14,7 +14,7 @@ const Menu = (props: any) => {
 
     return (
         <div id="reader-menu" className="fixed top-0 w-full h-full flex flex-col items-center justify-center z-10">
-            <Controls go={props.go} config={props.config} />
+            <Controls go={props.actions.go} config={props.config} />
             <Top props={props} showMenu={showMenu} setShowMenu={(e: boolean) => setShowMenu(e)} />
             {
                 showComments ?

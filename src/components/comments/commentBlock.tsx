@@ -7,7 +7,6 @@ import { Remarkable } from "remarkable";
 import StoreContext from '../../stores/appStore';
 import { timeAgo } from "../../middlewares/format";
 import { useContext, useState } from "react";
-import { toJS } from "mobx";
 
 interface CommentBlockProps {
     comment: {

@@ -22,7 +22,7 @@ const Comments = ({ current }: CommentsProps) => {
                 setHasComment(false);
             }
         }
-    }, [current.replies])
+    }, [current, current.replies])
 
     const toggleEditComment = () => {
         setEditComment(!editComment);

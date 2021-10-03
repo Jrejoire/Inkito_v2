@@ -18,47 +18,22 @@ const Reader = ({ type }: ReaderProps) => {
 
   let [seriesInfo, setSeriesInfo] = useState<any>({});
   let [ranked, setRanked] = useState<any[]>([]);
-  let [voted, setVoted] = useState<number>(0);
+  //let [voted, setVoted] = useState<number>(0);
   let [permlinks, setPermlinks] = useState<string[]>([]);
   let [series, setSeries] = useState<seriesProps[]>([]);
   let [episode, setEpisode] = useState<number>(0);
-  let [config, setConfig] = useState<ConfigProps>({ mode: "spread", sort: "rightToLeft", background: "black", transition: true });
+  let [config, setConfig] = useState<ConfigProps>({ mode: "vertical", sort: "rightToLeft", background: "black", transition: true });
   let [page, setPage] = useState(0);
   let [userData, setUserData] = useState<userDataProps>({ isSubscribed: false, autoVoteOn: false, disableVote: false, voting_power: 0 });
-  let [toggleRender, setToggleRender] = useState<number>(0);
+  let [scrollTrigger, setScrollTrigger] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (props.author && props.seriesTitle) {
-      processPermlinks(props.author, props.seriesTitle);
-    }
-    let seriesId = seriesIdGenerator(props.author, props.seriesTitle);
-    processSeriesInfo(seriesId);
-
-    if (true || store.userDetail.name) {
-      let username: string = store.userDetail.name || "jrej";
-      getUserInfo(username);
-    } 
-  }, [])
-
-  const getUserInfo = async (username : string) => {
+  const getUserInfo = async (username: string) => {
     let info = await store.getUserInfo(username);
     if (info && info.length > 0) {
       //voting power shows 0 when at 100%.
       userData.voting_power = info[0].voting_power !== 0 ? info[0].voting_power : 10000;
     }
   }
-
-  useEffect(() => {
-    if (permlinks && permlinks.length > 0) {
-      addEpisodes();
-    }
-  }, [episode, permlinks])
-  
-  useEffect(() => autorun(() => {
-    if (store.seriesInfo.followers && seriesInfo.followers === undefined) {
-      setSeriesInfo({...seriesInfo, followers: store.seriesInfo.followers});
-    }
-  }),[seriesInfo, store.seriesInfo.followers]);
 
   const processPermlinks = async (author: string, seriesTitle: string) => {
     let permlinks = await store.fetchPermlinks(author, seriesTitle);
@@ -74,6 +49,45 @@ const Reader = ({ type }: ReaderProps) => {
       setRanked(ranked);
     }
   }
+
+  const processSeriesInfo = async (seriesId: string) => {
+    let infos = await store.fetchSeriesInfo(seriesId);
+    if (infos) {
+      setSeriesInfo(infos);
+      if (infos && infos.config) {
+        if (infos.config.background) {
+          setConfig({ ...config, background: infos.config.background })
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (props.author && props.seriesTitle) {
+      processPermlinks(props.author, props.seriesTitle);
+    }
+    let seriesId = seriesIdGenerator(props.author, props.seriesTitle);
+    processSeriesInfo(seriesId);
+
+    if (true || store.userDetail.name) {
+      let username: string = store.userDetail.name || "jrej";
+      getUserInfo(username);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.author, props.seriesTitle, store.userDetail.name])
+
+  useEffect(() => {
+    if (permlinks && permlinks.length > 0) {
+      addEpisodes();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [episode, permlinks])
+
+  useEffect(() => autorun(() => {
+    if (store.seriesInfo.followers && seriesInfo.followers === undefined) {
+      setSeriesInfo({ ...seriesInfo, followers: store.seriesInfo.followers });
+    }
+  }), [seriesInfo, store.seriesInfo.followers]);
 
   const getRankedNumber = (author: string, permlinks: string[]) => new Promise<any[]>(async (resolve) => {
     let ranked: any[] = [];
@@ -96,18 +110,6 @@ const Reader = ({ type }: ReaderProps) => {
       }
     }
   })
-
-  const processSeriesInfo = async (seriesId: string) => {
-    let infos = await store.fetchSeriesInfo(seriesId);
-    if (infos) {
-      setSeriesInfo(infos);
-      if (infos && infos.config) {
-        if (infos.config.background) {
-          setConfig({ ...config, background: infos.config.background })
-        }
-      }
-    }
-  }
 
   const addEpisodes = async () => {
     if (!series[episode]) {
@@ -144,27 +146,12 @@ const Reader = ({ type }: ReaderProps) => {
         if (content) {
           //remove blacklist images 
           const blackListImages = [
-            "https://images.hive.blog/DQmXcA3xhDNEaesBeRzy3eq3Jw1zyGQEjzHY1DPc84P7peA/inkito-banner.png",
-            "https://img.youtube.com/vi/WfD8Dnh2xho/0.jpg", "http://eurobeast.dk/misc/public/Katharsisdrill_rund_150X150.png",
-            "https://i.creativecommons.org/l/by/4.0/88x31.png", "http://phillfromgchq.co.uk/images/other/bitcoin.png",
-            "http://phillfromgchq.co.uk/images/other/katharsisdrill.png",
-            "http://phillfromgchq.co.uk/images/other/steem.png",
-            "http://phillfromgchq.co.uk/images/other/flattr.png",
-            "http://phillfromgchq.co.uk/images/other/patreon.png",
-            "http://phillfromgchq.co.uk/images/other/flattr.png",
-            "http://eurobeast.dk/misc/public/Katharsisdrill_rund_150X150.png",
-            "http://eurobeast.dk/misc/Steemit/September/Phill001_ikon.jpg",
-            "http://phillfromgchq.co.uk/images/other/streg.png",
-            "https://img1.steemit.com/0x0/http://eurobeast.dk/misc/Steemit/Serier/Phill_link.jpg",
-            "http://phillfromgchq.co.uk/images/other/Patreon_logo_ny.png",
-            "http://phillfromgchq.co.uk/images/other/liberapay_logo.png",
-            "http://phillfromgchq.co.uk/images/other/liberapay_logo_ny.png"
+            "https://images.hive.blog/DQmXcA3xhDNEaesBeRzy3eq3Jw1zyGQEjzHY1DPc84P7peA/inkito-banner.png"
           ];
           const regexBlackList = [/http:\/\/eurobeast\.dk\/.*450\.jpg/g]
 
           content.image = content.image.filter((image: string) => !blackListImages.includes(image) && !regexBlackList.some(regex => image.match(regex)));
           tempSeries[episodeNumber] = content;
-          setToggleRender(episodeNumber)
           setSeries(tempSeries);
           if (content.image.length === 1 && config.mode === "spread") {
             setConfig({ ...config, mode: "page" })
@@ -205,20 +192,34 @@ const Reader = ({ type }: ReaderProps) => {
     },
     fetchAll: () => {
       addAllEpisodes();
-    }
-  }
-
-  const go = {
-    next: () => {
-      let currentLength = series[episode]?.image?.length || 0
-      if (config.mode === "spread") {
-        if (page === 0 && episode === 0) {
-          setPage(page + 1);
-        } else if (page < currentLength - 2) {
-          //next page
-          setPage(page + 2);
+    },
+    go: {
+      next: () => {
+        let currentLength = series[episode]?.image?.length || 0
+        if (config.mode === "spread") {
+          if (page === 0 && episode === 0) {
+            setPage(page + 1);
+          } else if (page < currentLength - 2) {
+            //next page
+            setPage(page + 2);
+          } else {
+            if (page < currentLength - 1 && ((episode > 0 && currentLength % 2 > 0) || (episode === 0 && currentLength % 2 === 0))) {
+              setPage(page + 1);
+            } else {
+              //next episode, first page
+              if (episode < permlinks.length - 1) {
+                setEpisode(episode + 1)
+                setPage(0);
+              }
+            }
+          }
+        } else if (config.mode === "vertical") {
+          if (episode < permlinks.length - 1) {
+            setEpisode(episode + 1)
+          }
         } else {
-          if (page < currentLength - 1 && ((episode > 0 && currentLength % 2 > 0) || (episode === 0 && currentLength % 2 === 0))) {
+          if (page < currentLength - 1) {
+            //next page
             setPage(page + 1);
           } else {
             //next episode, first page
@@ -228,79 +229,67 @@ const Reader = ({ type }: ReaderProps) => {
             }
           }
         }
-      } else if (config.mode === "vertical") {
-        if (episode < permlinks.length - 1) {
-          setEpisode(episode + 1)
-        }
-      } else {
-        if (page < currentLength - 1) {
-          //next page
-          setPage(page + 1);
-        } else {
-          //next episode, first page
-          if (episode < permlinks.length - 1) {
-            setEpisode(episode + 1)
-            setPage(0);
-          }
-        }
-      }
 
-    },
-    previous: () => {
-      let currentLength = series[episode]?.image?.length || 0
-      let previousLength = series[episode - 1]?.image?.length || 0
-      if (config.mode === "spread") {
-        if (page === 1) {
-          setPage(page - 1);
-        } else if (page > 1) {
-          if (page === currentLength - 1) {
-            if (previousLength % 2 > 0) {
-              setPage(page - 1);
+      },
+      previous: () => {
+        let currentLength = series[episode]?.image?.length || 0
+        let previousLength = series[episode - 1]?.image?.length || 0
+        if (config.mode === "spread") {
+          if (page === 1) {
+            setPage(page - 1);
+          } else if (page > 1) {
+            if (page === currentLength - 1) {
+              if (previousLength % 2 > 0) {
+                setPage(page - 1);
+              } else {
+                setPage(page - 2);
+              }
             } else {
               setPage(page - 2);
             }
           } else {
-            setPage(page - 2);
+            if (episode > 0) {
+              if (((episode > 1 && previousLength % 2 > 0) || (episode === 1 && previousLength % 2 === 0))) {
+                setEpisode(episode - 1);
+                setPage(previousLength - 1);
+              } else {
+                setEpisode(episode - 1);
+                setPage(previousLength - 2);
+              }
+            }
+          }
+        } else if (config.mode === "vertical") {
+          if (episode > 0) {
+            setEpisode(episode - 1)
           }
         } else {
           if (episode > 0) {
-            if (((episode > 1 && previousLength % 2 > 0) || (episode === 1 && previousLength % 2 === 0))) {
-              setEpisode(episode - 1);
-              setPage(previousLength - 1);
-            } else {
-              setEpisode(episode - 1);
-              setPage(previousLength - 2);
-            }
+            setEpisode(episode - 1)
+            setPage(previousLength - 1);
+          } else if (page > 0) {
+            setPage(page - 1);
           }
         }
-      } else if (config.mode === "vertical") {
-        if (episode > 0) {
-          setEpisode(episode - 1)
+      },
+      to: (episode: number, page: number, shouldScroll: boolean) => {
+        setEpisode(episode);
+        if (page) {
+          setPage(page);
+        } else {
+          setPage(0);
         }
-      } else {
-        if (episode > 0) {
-          setEpisode(episode - 1)
-          setPage(previousLength - 1);
-        } else if (page > 0) {
-          setPage(page - 1);
+        if (shouldScroll && config.mode === "vertical") {
+          setScrollTrigger(!scrollTrigger);
         }
-      }
-    },
-    to: (episode: number, page: number) => {
-      setEpisode(episode);
-      if (page) {
-        setPage(page);
-      } else {
-        setPage(0);
       }
     }
   }
 
   return (
     <div className={`w-screen relative bg-${config.background} ${config.mode === "vertical" ? "overflow-x-hidden" : "overflow-hidden h-screen"}`} >
-      <Menu actions={actions} go={go} toggleRender={toggleRender} config={config} series={series} current={series[episode]} seriesInfo={{ ...seriesInfo, ranked: ranked/*, voted: voted*/ }} episode={episode} page={page} userData={userData} />
+      <Menu actions={actions} config={config} series={series} seriesInfo={{ ...seriesInfo, ranked: ranked/*, voted: voted*/ }} episode={episode} page={page} userData={userData} />
       <div id="vertical-body" className={`flex flex-col ${config.mode === "vertical" ? "justify-start items-center px-0 md:px-20 lg:px-30 xl:px-96" : "hidden"} z-0`}>
-        <Pages config={config} episode={episode} page={page} series={series} toggleRender={toggleRender} setPage={setPage} setEpisode={setEpisode} />
+        <Pages actions={actions} config={config} episode={episode} page={page} series={series} scrollTrigger={scrollTrigger} />
       </div>
       <div id="page-body" className={`flex flex-col ${config.mode === "vertical" ? "hidden" : "w-screen absolute top-0 h-screen justify-center items-center"} z-0`}>
         <Page episode={episode} page={page} images={series[episode] && series[episode].image} config={config} />

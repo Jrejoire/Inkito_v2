@@ -5,7 +5,8 @@ import { Remarkable } from "remarkable";
 import { timeAgo } from "../../../middlewares/format";
 
 const Blog = ({ props, toggleComments }: any) => {
-    let { current } = props;
+    let { series, episode } = props;
+    let current = series[episode];
     let [body, setBody] = useState<string>("");
     let [showAll, setShowAll] = useState<boolean>(false);
 

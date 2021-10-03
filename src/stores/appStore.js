@@ -2,8 +2,6 @@ import React from 'react';
 import { useLocalStore } from 'mobx-react';
 import { runInAction } from 'mobx';
 import { safeJSON } from '../middlewares/json';
-import { computeHeadingLevel } from '@testing-library/react';
-import { nextTick } from 'process';
 
 //Hivesigner
 var hivesigner = require('hivesigner');
@@ -387,11 +385,11 @@ export function StoreProvider({ children }) {
                 store.followState = "pending";
             })
 
-            let options = {
-                method: 'POST',
-                headers: new Headers({ 'content-type': 'application/json' }),
-                body: safeJSON.stringify({ follower, following })
-            };
+            // let options = {
+            //     method: 'POST',
+            //     headers: new Headers({ 'content-type': 'application/json' }),
+            //     body: safeJSON.stringify({ follower, following })
+            // };
 
             // fetch(`${ENDPOINT}/follow`, options)
             //     .then(res => {
@@ -417,11 +415,11 @@ export function StoreProvider({ children }) {
         unfollow: (unfollower, unfollowing) => {
             store.followState = "pending";
 
-            let options = {
-                method: 'POST',
-                headers: new Headers({ 'content-type': 'application/json' }),
-                body: safeJSON.stringify({ unfollower, unfollowing })
-            };
+            // let options = {
+            //     method: 'POST',
+            //     headers: new Headers({ 'content-type': 'application/json' }),
+            //     body: safeJSON.stringify({ unfollower, unfollowing })
+            // };
 
             // fetch(`${ENDPOINT}/unfollow`, options)
             //     .then(res => {
@@ -444,11 +442,11 @@ export function StoreProvider({ children }) {
         vote: (voter, author, permlink, weight, page) => new Promise (async (resolve) => {
             store.voteState = "pending";
 
-            let options = {
-                method: 'POST',
-                headers: new Headers({ 'content-type': 'application/json' }),
-                body: safeJSON.stringify({ voter, author, permlink, weight })
-            };
+            // let options = {
+            //     method: 'POST',
+            //     headers: new Headers({ 'content-type': 'application/json' }),
+            //     body: safeJSON.stringify({ voter, author, permlink, weight })
+            // };
 
             // fetch(`${ENDPOINT}/vote`, options)
             //     .then(res => {
@@ -491,11 +489,11 @@ export function StoreProvider({ children }) {
         comment: async (params) => {
             store.commentState = "pending";
             
-            let options = {
-                method: 'POST',
-                headers: new Headers({ 'content-type': 'application/json' }),
-                body: safeJSON.stringify(params)
-            };  
+            // let options = {
+            //     method: 'POST',
+            //     headers: new Headers({ 'content-type': 'application/json' }),
+            //     body: safeJSON.stringify(params)
+            // };  
 
             // let response = await fetch(`${ENDPOINT}/comment`, options)
             //     .then(res => {

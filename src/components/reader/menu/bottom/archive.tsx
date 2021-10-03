@@ -1,21 +1,20 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 
 interface ArchiveProps {
     props: {
         actions: any,
-        go: any,
-        series: { image: string, permlink: string }[],
+        series: { image: string[], permlink: string }[],
         episode: number,
-        toggleRender: number
+        page: number
     },
     showMenu: boolean,
     hideArchive: () => void,
 }
 
 const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
-    let { actions, go, series, episode, toggleRender } = props;
-    let [archiveIndex, setArchiveIndex] = useState<number>(episode + 1);
+    let { actions, series, episode, page } = props;
+    let [archiveIndex, setArchiveIndex] = useState<number>(episode);
     let [indexLength, setIndexLength] = useState<number>(0);
 
     const indexRef = React.useRef<any>(null);
@@ -29,7 +28,7 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
                 scrollToRef(indexRef, false);
             }
         })
-    }, [])
+    }, [actions])
 
     useEffect(() => {
         if (timeoutRef.current !== null) {
@@ -42,16 +41,30 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
                 hideArchive();
             }
         }, 1200)
+    }, [hideArchive, showMenu])
 
-    }, [showMenu])
+    useEffect(() => {
+        //Update archive index with current page
+        let pageCount = 0;
+        for (let i = 0; i <= episode; i++) {
+            if (series[i] && series[i].image && series[i].image.length > 0) {
+                for (let j = 0; j < series[i].image.length; j++) {
+                    if (i < episode || j <= page) {
+                        pageCount = pageCount + 1;
+                    }
+                }
+            }
+        }
+        setArchiveIndex(pageCount - 1);
+    }, [page, episode, series])
 
     type RenderProps = {
-        toggleRender: number,
+        series: { image: string[], permlink: string }[],
         archiveIndex: number
     }
 
-    const PageRenderer = observer(({ toggleRender, archiveIndex }: RenderProps) => {
-        if (toggleRender && series && series.length > 0) {
+    const PageRenderer = observer(({ archiveIndex, series }: RenderProps) => {
+        if (series && series.length > 0) {
             let contentArray: any[] = [];
             for (let i = 0; i < series.length; i++) {
                 if (series[i] && series[i].image && series[i].image.length > 0) {
@@ -60,7 +73,7 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
                         contentArray.push(
                             <div ref={index === archiveIndex ? indexRef : null} key={series[i].permlink + j} className={`flex flex-col h-full w-3/12 mx-1 justify-between items-center cursor-pointer bg-cover`} onClick={() => archiveActions.set(i, j, index)}>
                                 <div className="h-full w-auto flex justify-center items-center overflow-hidden mt-0.5">
-                                    <img className="w-full h-auto" src={series[i].image[j]} />
+                                    <img className="w-full h-auto" src={series[i].image[j]} alt="" />
                                 </div>
                                 <p className={`text-xs p-1 m-1 ${index === archiveIndex ? "bg-purple-600 rounded text-white" : ""}`}>E{i + 1}P{j + 1}</p>
                             </div>
@@ -123,7 +136,7 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
             archiveActions.set(lastEpisode, lastPage, lastIndex);
         },
         set: (episode: number, page: number, index: number) => {
-            go.to(episode, page);
+            actions.go.to(episode, page, true);
             setArchiveIndex(index);
             setTimeout(() => {
                 scrollToRef(indexRef, true);
@@ -156,29 +169,29 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
             </svg>
             {
                 indexLength > 26 ?
-                <svg
-                    className="w-14 cursor-pointer" xmlns="http://www.w3.org/2000/svg"
-                    fill="none" viewBox="0 0 24 24"
-                    stroke={`white`}
-                    onClick={archiveActions.previous}
-                >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>:
-                <></>
+                    <svg
+                        className="w-14 cursor-pointer" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24"
+                        stroke={`white`}
+                        onClick={archiveActions.previous}
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg> :
+                    <></>
             }
             <div ref={containerRef} className="bg-white w-full h-full z-30 flex flex-row overflow-hidden mx-2">
-                <PageRenderer toggleRender={toggleRender} archiveIndex={archiveIndex} />
+                <PageRenderer archiveIndex={archiveIndex} series={series} />
             </div>
             {
                 indexLength > 26 ?
-                <svg
-                    className="w-14 cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke={`white`}
-                    onClick={archiveActions.next}
-                >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>:
-                <></>
+                    <svg
+                        className="w-14 cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke={`white`}
+                        onClick={archiveActions.next}
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg> :
+                    <></>
             }
             <svg xmlns="http://www.w3.org/2000/svg" className="w-14 mr-1 text-white cursor-pointer" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor" onClick={archiveActions.last} >

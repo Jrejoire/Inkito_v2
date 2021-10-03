@@ -1,4 +1,4 @@
-import React from "react";
+//import React from "react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 
@@ -58,7 +58,7 @@ const Top = ({ props, showMenu, setShowMenu }: any) => {
 
             </div>
             <div className="flex flex-1 flex-row mx-4 text-white z-10 justify-center items-center">
-                <img className="h-10 rounded-full" src={`https://images.hive.blog/u/${seriesInfo.author}/avatar`} />
+                <img className="h-10 rounded-full" src={`https://images.hive.blog/u/${seriesInfo.author}/avatar`} alt=""/>
                 <div className="flex flex-col justify-center items-start mx-4">
                     <p className="uppercase">{seriesInfo.author}</p>
                     <FollowerCount followers={seriesInfo.followers}/>

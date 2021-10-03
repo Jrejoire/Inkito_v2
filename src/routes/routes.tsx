@@ -1,6 +1,6 @@
 import 'core-js';
-import React, { useEffect } from 'react';
-import StoreContext from '../stores/appStore';
+import { useEffect } from 'react';
+//import StoreContext from '../stores/appStore';
 import {
   BrowserRouter as Router,
   Switch,
@@ -10,7 +10,7 @@ import {
 import Reader from "./reader";
 
 const Routes = () => {
-  const store = React.useContext(StoreContext);
+  //const store = React.useContext(StoreContext);
 
   useEffect(() => {
     // getUserDetail();
