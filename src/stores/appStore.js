@@ -209,8 +209,8 @@ export function StoreProvider({ children }) {
             }
         },
         checkCookieConsent: () => {
-            const cookie = localStorage.getItem('cookie-consent');
-            store.cookieConsent = safeJSON.parse(cookie);
+            // const cookie = localStorage.getItem('cookie-consent');
+            // store.cookieConsent = safeJSON.parse(cookie);
         },
         toggleReplyIsActive: (value) => {
             if (store.replyIsActive === value) {
@@ -354,10 +354,10 @@ export function StoreProvider({ children }) {
                     store.userDetail = userDetail;
 
                     if (access_token) {
-                        localStorage.setItem('access-token', safeJSON.stringify(access_token));
+                        //localStorage.setItem('access-token', safeJSON.stringify(access_token));
                     }
                     if (username) {
-                        localStorage.setItem('users', safeJSON.stringify(username));
+                        //localStorage.setItem('users', safeJSON.stringify(username));
                     }
                 })
             }
@@ -369,8 +369,8 @@ export function StoreProvider({ children }) {
                         store.userDetail = {};
                         document.location.href = '/';
                     }
-                    localStorage.setItem('access-token', "");
-                    localStorage.setItem('users', "");
+                    //localStorage.setItem('access-token', "");
+                    //localStorage.setItem('users', "");
                     store.userDetail = {};
                 })
                 .catch(err => {
