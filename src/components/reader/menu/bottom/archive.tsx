@@ -52,8 +52,6 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
             for (let i = 0; i < series.length; i++) {
                 if (series[i] && series[i].image && series[i].image.length > 0) {
                     for (let j = 0; j < 1; j++) {
-                        //console.log(typeof episode); string
-                        //Episode is a string! WTF?!?
                         contentArray.push(
                             <div ref={parseInt(episode.toString()) === i && parseInt(page.toString()) === j ? indexRef : null} key={series[i].permlink + j} className={`flex flex-col h-full w-3/12 mx-1 justify-between items-center cursor-pointer bg-cover`} onClick={() => archiveActions.set(i, j)}>
                                 <div className="h-full w-auto flex justify-center items-center overflow-hidden mt-0.5">

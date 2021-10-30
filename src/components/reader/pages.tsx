@@ -37,9 +37,7 @@ const Pages = ({ actions, config, episode, page, series, scrollTrigger }) => {
         }
 
         const onScroll = () => {
-            console.log(updateState.current);
             if (updateState.current) {
-                console.log("SCROLLING TRIGGER")
                 updateState.current = false;
                 let topInView = firstPageInViewport();
                 if (topInView) {
@@ -62,7 +60,6 @@ const Pages = ({ actions, config, episode, page, series, scrollTrigger }) => {
     }, [actions.go]);
 
     useEffect(() => {
-        console.log("SCROLL");
         updateState.current = false;
         executeScroll();
         setTimeout(() => {

@@ -274,8 +274,6 @@ const Reader = ({ type }: ReaderProps) => {
         }
       },
       to: (episode: number, page: number, shouldScroll: boolean) => {
-        console.log("ACTION GO TO episode: " + episode);
-        console.log("ACTION GO TO page: " + page);
         setEpisode(episode);
         if (page) {
           setPage(page);
