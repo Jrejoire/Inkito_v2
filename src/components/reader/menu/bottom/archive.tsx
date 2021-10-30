@@ -14,7 +14,6 @@ interface ArchiveProps {
 
 const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
     let { actions, series, episode, page } = props;
-    let [archiveIndex, setArchiveIndex] = useState<number>(episode);
     let [indexLength, setIndexLength] = useState<number>(0);
 
     const indexRef = React.useRef<any>(null);
@@ -23,14 +22,12 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
 
     useEffect(() => {
         actions.fetchAll();
-        setTimeout(() => {
-            if (indexRef && indexRef.current && containerRef && containerRef.current) {
-                scrollToRef(indexRef, false);
-            }
-        })
+        if (indexRef && indexRef.current && containerRef && containerRef.current) {
+            scrollToRef(indexRef, false);
+        }
     }, [actions])
 
-    useEffect(() => {
+    useEffect(() => {  
         if (timeoutRef.current !== null) {
             clearTimeout(timeoutRef.current);
         }
@@ -43,39 +40,26 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
         }, 1200)
     }, [hideArchive, showMenu])
 
-    useEffect(() => {
-        //Update archive index with current page
-        let pageCount = 0;
-        for (let i = 0; i <= episode; i++) {
-            if (series[i] && series[i].image && series[i].image.length > 0) {
-                for (let j = 0; j < series[i].image.length; j++) {
-                    if (i < episode || j <= page) {
-                        pageCount = pageCount + 1;
-                    }
-                }
-            }
-        }
-        setArchiveIndex(pageCount - 1);
-    }, [page, episode, series])
-
     type RenderProps = {
+        episode: number,
+        page: number,
         series: { image: string[], permlink: string }[],
-        archiveIndex: number
     }
 
-    const PageRenderer = observer(({ archiveIndex, series }: RenderProps) => {
+    const PageRenderer = observer(({ episode, page, series }: RenderProps) => {        
         if (series && series.length > 0) {
             let contentArray: any[] = [];
             for (let i = 0; i < series.length; i++) {
                 if (series[i] && series[i].image && series[i].image.length > 0) {
-                    for (let j = 0; j < series[i].image.length; j++) {
-                        let index = contentArray.length;
+                    for (let j = 0; j < 1; j++) {
+                        //console.log(typeof episode); string
+                        //Episode is a string! WTF?!?
                         contentArray.push(
-                            <div ref={index === archiveIndex ? indexRef : null} key={series[i].permlink + j} className={`flex flex-col h-full w-3/12 mx-1 justify-between items-center cursor-pointer bg-cover`} onClick={() => archiveActions.set(i, j, index)}>
+                            <div ref={parseInt(episode.toString()) === i && parseInt(page.toString()) === j ? indexRef : null} key={series[i].permlink + j} className={`flex flex-col h-full w-3/12 mx-1 justify-between items-center cursor-pointer bg-cover`} onClick={() => archiveActions.set(i, j)}>
                                 <div className="h-full w-auto flex justify-center items-center overflow-hidden mt-0.5">
                                     <img className="w-full h-auto" src={series[i].image[j]} alt="" />
                                 </div>
-                                <p className={`text-xs p-1 m-1 ${index === archiveIndex ? "bg-purple-600 rounded text-white" : ""}`}>E{i + 1}P{j + 1}</p>
+                                <p className={`text-xs p-1 m-1 episode-archiveLabel-${i} page-archiveLabel-${j} ${parseInt(episode.toString()) === i ? "bg-purple-600 rounded text-white" : ""}`}>E{i + 1}P{j + 1}</p>
                             </div>
                         )
                     }
@@ -88,7 +72,7 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
                 }
             }
             if (contentArray && contentArray.length > 0) {
-                setIndexLength(contentArray.length)
+                setIndexLength(contentArray.length);
                 return (
                     <>
                         {
@@ -127,17 +111,14 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
             }
         },
         first: () => {
-            archiveActions.set(0, 0, 0);
+            archiveActions.set(0, 0);
         },
         last: () => {
             let lastEpisode = series.length - 1;
-            let lastPage = series[lastEpisode]?.image?.length ? series[lastEpisode]?.image?.length - 1 : 0;
-            let lastIndex = indexLength - 1;
-            archiveActions.set(lastEpisode, lastPage, lastIndex);
+            archiveActions.set(lastEpisode, 0);
         },
-        set: (episode: number, page: number, index: number) => {
+        set: (episode: number, page: number) => {
             actions.go.to(episode, page, true);
-            setArchiveIndex(index);
             setTimeout(() => {
                 scrollToRef(indexRef, true);
             })
@@ -147,7 +128,7 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
     const scrollToRef = (ref: any, smooth: boolean) => {
         containerRef.current.scrollTo({
             top: 0,
-            left: ref.current.offsetLeft - (window.innerWidth / 2),
+            left: ref.current && ref.current.offsetLeft - (window.innerWidth / 2),
             behavior: smooth ? 'smooth' : 'auto'
         })
     }
@@ -180,7 +161,7 @@ const Archive = ({ props, showMenu, hideArchive }: ArchiveProps) => {
                     <></>
             }
             <div ref={containerRef} className="bg-white w-full h-full z-30 flex flex-row overflow-hidden mx-2">
-                <PageRenderer archiveIndex={archiveIndex} series={series} />
+                <PageRenderer episode={episode} page={page} series={series} />
             </div>
             {
                 indexLength > 26 ?

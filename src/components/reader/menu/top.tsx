@@ -1,8 +1,17 @@
-//import React from "react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 
-const Top = ({ props, showMenu, setShowMenu }: any) => {
+interface TopProps {
+    props: {
+        episode: number,
+        page: number,
+        seriesInfo: any,
+    },
+    showMenu: boolean,
+    setShowMenu: (arg: boolean) => void,
+}
+
+const Top = ({ props, showMenu, setShowMenu }: TopProps) => {
     let { seriesInfo, episode, page } = props;
 
     const FollowerCount = observer(({ followers }: { followers: string[] }) => {
@@ -15,7 +24,7 @@ const Top = ({ props, showMenu, setShowMenu }: any) => {
                 <></>
             )
         }
-    })    
+    })
 
 
     return (
@@ -24,7 +33,7 @@ const Top = ({ props, showMenu, setShowMenu }: any) => {
                 `absolute top-0 w-screen z-10 select-none w-11/12 h-20 flex flex-row justify-center items-center transition duration-500 ease-in-out 
                 ${showMenu ? "opacity-100" : "opacity-0 delay-1000"}`
             }
-            onMouseOver={() => setShowMenu(true)} 
+            onMouseOver={() => setShowMenu(true)}
             onMouseLeave={() => setShowMenu(false)}
         >
             <div className="flex-1 z-10">
@@ -46,11 +55,11 @@ const Top = ({ props, showMenu, setShowMenu }: any) => {
                             <>
                                 <div className="flex flex-row">
                                     <p className="mx-1">Episode</p>
-                                    <p>{episode + 1}</p>
+                                    <p>{parseInt(episode.toString()) + 1}</p>
                                 </div>
                                 <div className="flex flex-row">
                                     <p className="mx-1">Page</p>
-                                    <p>{page + 1}</p>
+                                    <p>{parseInt(page.toString()) + 1}</p>
                                 </div>
                             </>
                     }
@@ -58,10 +67,10 @@ const Top = ({ props, showMenu, setShowMenu }: any) => {
 
             </div>
             <div className="flex flex-1 flex-row mx-4 text-white z-10 justify-center items-center">
-                <img className="h-10 rounded-full" src={`https://images.hive.blog/u/${seriesInfo.author}/avatar`} alt=""/>
+                <img className="h-10 rounded-full" src={`https://images.hive.blog/u/${seriesInfo.author}/avatar`} alt="" />
                 <div className="flex flex-col justify-center items-start mx-4">
                     <p className="uppercase">{seriesInfo.author}</p>
-                    <FollowerCount followers={seriesInfo.followers}/>
+                    <FollowerCount followers={seriesInfo.followers} />
                 </div>
             </div>
 

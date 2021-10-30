@@ -145,15 +145,17 @@ const Reader = ({ type }: ReaderProps) => {
         let tempSeries = series;
         if (content) {
           //remove blacklist images 
-          const blackListImages = [
-            "https://images.hive.blog/DQmXcA3xhDNEaesBeRzy3eq3Jw1zyGQEjzHY1DPc84P7peA/inkito-banner.png"
-          ];
-          const regexBlackList = [/http:\/\/eurobeast\.dk\/.*450\.jpg/g]
+          // const blackListImages = [
+          //   "https://images.hive.blog/DQmXcA3xhDNEaesBeRzy3eq3Jw1zyGQEjzHY1DPc84P7peA/inkito-banner.png"
+          // ];
+          // const regexBlackList = [/http:\/\/eurobeast\.dk\/.*450\.jpg/g]
 
-          content.image = content.image.filter((image: string) => !blackListImages.includes(image) && !regexBlackList.some(regex => image.match(regex)));
+          // if (content.image && content.image.length > 0) {
+          //   content.image = content.image.filter((image: string) => !blackListImages.includes(image) && !regexBlackList.some(regex => image.match(regex)));
+          // }
           tempSeries[episodeNumber] = content;
           setSeries(tempSeries);
-          if (content.image.length === 1 && config.mode === "spread") {
+          if ((content.image && content.image.length === 1) && config.mode === "spread") {
             setConfig({ ...config, mode: "page" })
             //disable spread button;
           }
@@ -272,6 +274,8 @@ const Reader = ({ type }: ReaderProps) => {
         }
       },
       to: (episode: number, page: number, shouldScroll: boolean) => {
+        console.log("ACTION GO TO episode: " + episode);
+        console.log("ACTION GO TO page: " + page);
         setEpisode(episode);
         if (page) {
           setPage(page);
